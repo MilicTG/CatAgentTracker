@@ -5,7 +5,7 @@ import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
-class CatStretchingWorker(context: Context, workerParameters: WorkerParameters) : Worker(
+class CatFurGroomingWorker (context: Context, workerParameters: WorkerParameters) : Worker(
     context, workerParameters
 ) {
 
