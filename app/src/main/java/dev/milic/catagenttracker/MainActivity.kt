@@ -1,10 +1,14 @@
 package dev.milic.catagenttracker
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.work.*
+import dev.milic.catagenttracker.services.RouteTrackingService
+import dev.milic.catagenttracker.services.RouteTrackingService.Companion.EXTRA_SECRET_CAT_AGENT_ID
 import dev.milic.catagenttracker.worker.CatFurGroomingWorker
 import dev.milic.catagenttracker.worker.CatLitterBoxSittingWorker
 import dev.milic.catagenttracker.worker.CatStretchingWorker
@@ -95,6 +99,7 @@ class MainActivity : AppCompatActivity() {
             .observe(this, Observer { info ->
                 if (info.state.isFinished) {
                     showResult("Agent done suiting up. Ready to go!")
+                    launchTrackingService()
                 }
             })
 
@@ -105,5 +110,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun showResult(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun launchTrackingService() {
+        RouteTrackingService.trackingCompletion.observe(
+            this, Observer { agentId ->
+                showResult("Agent $agentId arrived!")
+            }
+        )
+
+        val serviceIntent = Intent(this, RouteTrackingService::class.java).apply {
+            putExtra(EXTRA_SECRET_CAT_AGENT_ID, "007")
+        }
+        ContextCompat.startForegroundService(this, serviceIntent)
     }
 }
